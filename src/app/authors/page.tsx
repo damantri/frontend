@@ -13,7 +13,6 @@ export default function AuthorsPage() {
           Crear autor
         </Link>
       </div>
-
       <ul className="grid sm:grid-cols-2 gap-4">
         {authors.map(a => (
           <li key={a.id} className="rounded-2xl shadow p-4 flex gap-3">

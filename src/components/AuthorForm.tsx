@@ -6,7 +6,6 @@ import type { Author } from "@/types/Author";
 
 const schema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
-  // hacemos image opcional si subes archivo
   image: z.string().url("Debe ser una URL válida").optional(),
   description: z.string().min(5, "Mínimo 5 caracteres"),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato YYYY-MM-DD"),
@@ -17,12 +16,12 @@ export default function AuthorForm({
   defaultValues,
   onSubmit,
   submitText = "Guardar",
-  onFileSelected, // <<< NUEVO
+  onFileSelected, 
 }: {
   defaultValues?: Partial<Author>;
   onSubmit: (data: FormData) => Promise<void> | void;
   submitText?: string;
-  onFileSelected?: (file: File | null) => void; // <<< NUEVO
+  onFileSelected?: (file: File | null) => void; 
 }) {
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm<FormData>({ resolver: zodResolver(schema), defaultValues });
@@ -31,12 +30,8 @@ export default function AuthorForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 max-w-lg">
       <input className="w-full border rounded p-2" placeholder="Nombre" {...register("name")} />
       {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
-
-      {/* URL opcional si subes archivo */}
       <input className="w-full border rounded p-2" placeholder="URL de imagen (opcional)" {...register("image")} />
       {errors.image && <p className="text-red-600 text-sm">{errors.image.message}</p>}
-
-      {/* NUEVO: subir imagen desde el equipo */}
       <input
         type="file"
         accept="image/*"
