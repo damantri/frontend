@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAuthors } from "@/hooks/useAuthors";
+import BackHomeBar from "@/components/BackHomeBar";
 
 export default function AuthorsPage() {
   const { authors, del } = useAuthors();
@@ -8,7 +9,7 @@ export default function AuthorsPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Autores</h1>
+        <BackHomeBar title="Autores" />
         <Link className="px-3 py-2 rounded-md bg-black text-white" href="/authors/create">
           Crear autor
         </Link>
