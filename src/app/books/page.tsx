@@ -4,7 +4,7 @@ import type { Book } from "@/types/Book";
 import BackHomeBar from "@/components/BackHomeBar";
 
 async function getBooks(): Promise<Book[]> {
-  return api<Book[]>("/books");
+  return api.books.list();
 }
 
 export default async function BooksPage() {
@@ -23,12 +23,19 @@ export default async function BooksPage() {
             href={`/books/${b.id}`}
             className="flex gap-4 p-4 rounded-2xl border hover:border-white/60 transition"
           >
-            <img src={b.image} alt={b.name} className="w-28 h-28 object-cover rounded" />
-            <div>
+            <img
+              src={b.image || "/placeholder.png"}
+              alt={b.name}
+              className="w-28 h-28 object-cover rounded"
+            />
+            <div className="min-w-0">
               <h3 className="text-lg font-semibold">{b.name}</h3>
               <p className="text-sm opacity-80 line-clamp-3">{b.description}</p>
               <p className="text-xs opacity-70 mt-1">
-                Publicado: {new Date(b.publishingDate).toLocaleDateString()}
+                Publicado:{" "}
+                {b.publishingDate
+                  ? new Date(b.publishingDate).toLocaleDateString()
+                  : "—"}
               </p>
             </div>
           </Link>
