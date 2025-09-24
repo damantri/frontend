@@ -5,12 +5,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import BackHomeBar from "@/components/BackHomeBar";
-import { api } from "@/lib/api";
-
+import { api } from "@/lib/api"; 
 const schema = z.object({
-
   name: z.string().min(2, "Nombre requerido"),
-  image: z.string().optional(), 
+  image: z.string().optional(),
   description: z.string().min(5, "Descripción requerida"),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD"),
 
@@ -36,42 +34,42 @@ export default function CreateAuthorPage() {
       <form
         className="space-y-3"
         onSubmit={handleSubmit(async (d) => {
-          const author = await api<{ id: number }>("/authors", {
-            method: "POST",
-            body: JSON.stringify({
+          try {
+       
+            const author = await api.create({
               name: d.name,
               image: d.image ?? "",
               description: d.description,
               birthDate: d.birthDate,
-            }),
-          });
-          const book = await api<{ id: number }>("/books", {
-            method: "POST",
-            body: JSON.stringify({
+            });
+
+
+            const book = await api.books.create({
               name: d.bookName,
               description: d.bookDescription,
               image: d.bookImage ?? "",
               publishingDate: d.bookPublishingDate,
-            }),
-          });
-          await api<void>(`/authors/${author.id}/books/${book.id}`, {
-            method: "POST",
-          });
+            });
+            if (author.id && book.id) {
+              await api.relations.addBookToAuthor(author.id, book.id);
+            }
 
-          const prize = await api<{ id: number }>("/prizes", {
-            method: "POST",
-            body: JSON.stringify({
+    
+            const prize = await api.prizes.create({
               name: d.prizeName,
               organization: d.prizeOrganization,
               description: d.prizeDescription,
-            }),
-          });
+            });
+            if (author.id && prize.id) {
+              await api.relations.addPrizeToAuthor(prize.id, author.id);
+            }
 
-          await api<void>(`/prizes/${prize.id}/author/${author.id}`, {
-            method: "POST",
-          });
-
-          router.push("/authors");
+            alert("Autor, libro y premio creados con éxito");
+            router.push("/authors");
+          } catch (err: any) {
+            console.error(err);
+            alert("Error al crear autor: " + (err.message ?? "desconocido"));
+          }
         })}
       >
         <h2 className="text-xl font-semibold mt-2">Autor</h2>
